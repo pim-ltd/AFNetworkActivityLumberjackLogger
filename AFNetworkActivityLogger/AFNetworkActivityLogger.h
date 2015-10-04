@@ -22,13 +22,50 @@
 
 #import <Foundation/Foundation.h>
 
-typedef NS_ENUM(NSUInteger, AFHTTPRequestLoggerLevel) {
-  AFLoggerLevelOff,
-  AFLoggerLevelDebug,
-  AFLoggerLevelInfo,
-  AFLoggerLevelWarn,
-  AFLoggerLevelError,
-  AFLoggerLevelFatal = AFLoggerLevelOff,
+// Defines "levels" of logging that will be used as values in a bitmask that filters log messages.
+typedef NS_ENUM (NSUInteger, AFNetworkingLoggingMask)
+{
+	/** Log all errors */
+	AFNetworkingLoggingMaskError = 1 << 0,
+	
+	/** Log warnings, and all errors */
+	AFNetworkingLoggingMaskWarn = 1 << 1,
+	
+	/** Log informative messagess, warnings and all errors */
+	AFNetworkingLoggingMaskInfo = 1 << 2,
+	
+	/** Log debugging messages, informative messages, warnings and all errors */
+	AFNetworkingLoggingMaskDebug = 1 << 3,
+	
+	/** Log verbose diagnostic information, debugging messages, informative messages, messages, warnings and all errors */
+	AFNetworkingLoggingMaskVerbose = 1 << 4,
+};
+
+/**
+ Defines a mask for logging that will be used by to filter log messages.
+ */
+typedef NS_ENUM (NSUInteger, AFNetworkingLoggingLevel)
+{
+	/** Don't log anything */
+	AFNetworkingLoggingLevelOff = 0,
+	
+	/** Log all errors and fatal messages */
+	AFNetworkingLoggingLevelError = (AFNetworkingLoggingMaskError),
+	
+	/** Log warnings, errors and fatal messages */
+	AFNetworkingLoggingLevelWarn = (AFNetworkingLoggingLevelError | AFNetworkingLoggingMaskWarn),
+	
+	/** Log informative, warning and error messages */
+	AFNetworkingLoggingLevelInfo = (AFNetworkingLoggingLevelWarn | AFNetworkingLoggingMaskInfo),
+	
+	/** Log all debugging, informative, warning and error messages */
+	AFNetworkingLoggingLevelDebug = (AFNetworkingLoggingLevelInfo | AFNetworkingLoggingMaskDebug),
+	
+	/** Log verbose diagnostic, debugging, informative, warning and error messages */
+	AFNetworkingLoggingLevelVerbose = (AFNetworkingLoggingLevelDebug | AFNetworkingLoggingMaskVerbose),
+	
+	/** Log everything */
+	AFNetworkingLoggingLevelAll = NSUIntegerMax
 };
 
 /**
@@ -45,7 +82,7 @@ typedef NS_ENUM(NSUInteger, AFHTTPRequestLoggerLevel) {
 /**
  The level of logging detail. See "Logging Levels" for possible values. `AFLoggerLevelInfo` by default.
  */
-@property (nonatomic, assign) AFHTTPRequestLoggerLevel level;
+@property (nonatomic, assign) AFNetworkingLoggingLevel level;
 
 /**
  Omit requests which match the specified predicate, if provided. `nil` by default.
@@ -81,29 +118,26 @@ typedef NS_ENUM(NSUInteger, AFHTTPRequestLoggerLevel) {
  The following constants specify the available logging levels for `AFNetworkActivityLogger`:
 
  enum {
- AFLoggerLevelOff,
- AFLoggerLevelDebug,
- AFLoggerLevelInfo,
- AFLoggerLevelWarn,
- AFLoggerLevelError,
- AFLoggerLevelFatal = AFLoggerLevelOff,
+ AFNetworkingLoggingLevelOff,
+ AFNetworkingLoggingLevelVerbose,
+ AFNetworkingLoggingLevelDebug,
+ AFNetworkingLoggingLevelInfo,
+ AFNetworkingLoggingLevelWarn,
+ AFNetworkingLoggingLevelError
  }
 
- `AFLoggerLevelOff`
+ `AFNetworkingLoggingLevelOff`
  Do not log requests or responses.
 
- `AFLoggerLevelDebug`
+ `AFNetworkingLoggingLevelDebug`
  Logs HTTP method, URL, header fields, & request body for requests, and status code, URL, header fields, response string, & elapsed time for responses.
  
- `AFLoggerLevelInfo`
+ `AFNetworkingLoggingLevelInfo`
  Logs HTTP method & URL for requests, and status code, URL, & elapsed time for responses.
 
- `AFLoggerLevelWarn`
+ `AFNetworkingLoggingLevelWarn`
  Logs HTTP method & URL for requests, and status code, URL, & elapsed time for responses, but only for failed requests.
  
- `AFLoggerLevelError`
- Equivalent to `AFLoggerLevelWarn`
-
- `AFLoggerLevelFatal`
- Equivalent to `AFLoggerLevelOff`
+ `AFNetworkingLoggingLevelError`
+ Equivalent to `AFNetworkingLoggingLevelWarn`
 */

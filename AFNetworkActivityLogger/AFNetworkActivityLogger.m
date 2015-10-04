@@ -25,7 +25,7 @@
 #import "AFURLSessionManager.h"
 
 #import <objc/runtime.h>
-#import "DDLog.h"
+#import "AFNetworkLogging.h"
 
 static NSURLRequest * AFNetworkRequestFromNotification(NSNotification *notification) {
     NSURLRequest *request = nil;
@@ -75,7 +75,7 @@ static NSError * AFNetworkErrorFromNotification(NSNotification *notification) {
         return nil;
     }
 
-    self.level = AFLoggerLevelInfo;
+    self.level = AFNetworkingLoggingLevelInfo;
 
     return self;
 }
@@ -123,11 +123,11 @@ static void * AFNetworkRequestStartDate = &AFNetworkRequestStartDate;
     }
 
     switch (self.level) {
-        case AFLoggerLevelDebug:
-            DDLogDebug(@"%@ '%@': %@ %@", [request HTTPMethod], [[request URL] absoluteString], [request allHTTPHeaderFields], body);
+        case AFNetworkingLoggingLevelDebug:
+            AFLogDebug(@"%@ '%@': %@ %@", [request HTTPMethod], [[request URL] absoluteString], [request allHTTPHeaderFields], body);
             break;
-        case AFLoggerLevelInfo:
-            DDLogInfo(@"%@ '%@'", [request HTTPMethod], [[request URL] absoluteString]);
+        case AFNetworkingLoggingLevelInfo:
+            AFLogInfo(@"%@ '%@'", [request HTTPMethod], [[request URL] absoluteString]);
             break;
         default:
             break;
@@ -164,28 +164,28 @@ static void * AFNetworkRequestStartDate = &AFNetworkRequestStartDate;
     NSTimeInterval elapsedTime = [[NSDate date] timeIntervalSinceDate:objc_getAssociatedObject(notification.object, AFNetworkRequestStartDate)];
     if (error) {
         switch (self.level) {
-            case AFLoggerLevelDebug:
-                DDLogDebug(@"[Error] %@ '%@' (%ld) [%.04f s]: %@", [request HTTPMethod], [[response URL] absoluteString], (long)responseStatusCode, elapsedTime, error);
+            case AFNetworkingLoggingLevelDebug:
+                AFLogDebug(@"[Error] %@ '%@' (%ld) [%.04f s]: %@", [request HTTPMethod], [[response URL] absoluteString], (long)responseStatusCode, elapsedTime, error);
                 break;
-            case AFLoggerLevelInfo:
-                DDLogInfo(@"[Error] %@ '%@' (%ld) [%.04f s]: %@", [request HTTPMethod], [[response URL] absoluteString], (long)responseStatusCode, elapsedTime, error);
+            case AFNetworkingLoggingLevelInfo:
+                AFLogInfo(@"[Error] %@ '%@' (%ld) [%.04f s]: %@", [request HTTPMethod], [[response URL] absoluteString], (long)responseStatusCode, elapsedTime, error);
                 break;
-            case AFLoggerLevelWarn:
-                DDLogWarn(@"[Error] %@ '%@' (%ld) [%.04f s]: %@", [request HTTPMethod], [[response URL] absoluteString], (long)responseStatusCode, elapsedTime, error);
+            case AFNetworkingLoggingLevelWarn:
+                AFLogWarn(@"[Error] %@ '%@' (%ld) [%.04f s]: %@", [request HTTPMethod], [[response URL] absoluteString], (long)responseStatusCode, elapsedTime, error);
                 break;
-            case AFLoggerLevelError:
-                DDLogError(@"[Error] %@ '%@' (%ld) [%.04f s]: %@", [request HTTPMethod], [[response URL] absoluteString], (long)responseStatusCode, elapsedTime, error);
+            case AFNetworkingLoggingLevelError:
+                AFLogError(@"[Error] %@ '%@' (%ld) [%.04f s]: %@", [request HTTPMethod], [[response URL] absoluteString], (long)responseStatusCode, elapsedTime, error);
                 break;
             default:
                 break;
         }
     } else {
         switch (self.level) {
-            case AFLoggerLevelDebug:
-                DDLogDebug(@"%ld '%@' [%.04f s]: %@ %@", (long)responseStatusCode, [[response URL] absoluteString], elapsedTime, responseHeaderFields, responseObject);
+            case AFNetworkingLoggingLevelDebug:
+                AFLogDebug(@"%ld '%@' [%.04f s]: %@ %@", (long)responseStatusCode, [[response URL] absoluteString], elapsedTime, responseHeaderFields, responseObject);
                 break;
-            case AFLoggerLevelInfo:
-                DDLogInfo(@"%ld '%@' [%.04f s]", (long)responseStatusCode, [[response URL] absoluteString], elapsedTime);
+            case AFNetworkingLoggingLevelInfo:
+                AFLogInfo(@"%ld '%@' [%.04f s]", (long)responseStatusCode, [[response URL] absoluteString], elapsedTime);
                 break;
             default:
                 break;
