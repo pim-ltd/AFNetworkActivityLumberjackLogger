@@ -43,7 +43,7 @@ static NSError * AFNetworkErrorFromNotification(NSNotification *notification) {
     if ([[notification object] isKindOfClass:[AFURLConnectionOperation class]]) {
         error = [(AFURLConnectionOperation *)[notification object] error];
     }
-    
+
 #if __IPHONE_OS_VERSION_MIN_REQUIRED >= 70000
     if ([[notification object] isKindOfClass:[NSURLSessionTask class]]) {
         error = [(NSURLSessionTask *)[notification object] error];
@@ -52,7 +52,7 @@ static NSError * AFNetworkErrorFromNotification(NSNotification *notification) {
         }
     }
 #endif
-    
+
     return error;
 }
 
@@ -137,7 +137,10 @@ static void * AFNetworkRequestStartDate = &AFNetworkRequestStartDate;
 - (void)networkRequestDidFinish:(NSNotification *)notification {
     NSURLRequest *request = AFNetworkRequestFromNotification(notification);
     NSURLResponse *response = [notification.object response];
+
     NSError *error = AFNetworkErrorFromNotification(notification);
+	NSData *errorData = [error.userInfo objectForKey:@"com.alamofire.serialization.response.error.data"];
+	NSString *errorBody = [[NSString alloc] initWithData:errorData encoding:NSUTF8StringEncoding];
 
     if (!request && !response) {
         return;
@@ -168,13 +171,13 @@ static void * AFNetworkRequestStartDate = &AFNetworkRequestStartDate;
                 AFLogDebug(@"[Error] %@ '%@' (%ld) [%.04f s]: %@", [request HTTPMethod], [[response URL] absoluteString], (long)responseStatusCode, elapsedTime, error);
                 break;
             case AFNetworkingLoggingLevelInfo:
-                AFLogInfo(@"[Error] %@ '%@' (%ld) [%.04f s]: %@", [request HTTPMethod], [[response URL] absoluteString], (long)responseStatusCode, elapsedTime, error);
+                AFLogInfo(@"[Error] %@ '%@' (%ld) [%.04f s]: %@", [request HTTPMethod], [[response URL] absoluteString], (long)responseStatusCode, elapsedTime, errorBody);
                 break;
             case AFNetworkingLoggingLevelWarn:
-                AFLogWarn(@"[Error] %@ '%@' (%ld) [%.04f s]: %@", [request HTTPMethod], [[response URL] absoluteString], (long)responseStatusCode, elapsedTime, error);
+                AFLogWarn(@"[Error] %@ '%@' (%ld) [%.04f s]: %@", [request HTTPMethod], [[response URL] absoluteString], (long)responseStatusCode, elapsedTime, errorBody);
                 break;
             case AFNetworkingLoggingLevelError:
-                AFLogError(@"[Error] %@ '%@' (%ld) [%.04f s]: %@", [request HTTPMethod], [[response URL] absoluteString], (long)responseStatusCode, elapsedTime, error);
+                AFLogError(@"[Error] %@ '%@' (%ld) [%.04f s]: %@", [request HTTPMethod], [[response URL] absoluteString], (long)responseStatusCode, elapsedTime, errorBody);
                 break;
             default:
                 break;
