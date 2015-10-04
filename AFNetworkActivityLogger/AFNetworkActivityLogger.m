@@ -27,6 +27,12 @@
 #import <objc/runtime.h>
 #import "AFNetworkLogging.h"
 
+#ifdef DEBUG
+static AFNetworkingLoggingLevel kAFNetworkingLoggingLevel = AFNetworkingLoggingLevelDebug;
+#else
+static AFNetworkingLoggingLevel kAFNetworkingLoggingLevel = AFNetworkingLoggingLevelError;
+#endif
+
 static NSURLRequest * AFNetworkRequestFromNotification(NSNotification *notification) {
     NSURLRequest *request = nil;
     if ([[notification object] isKindOfClass:[AFURLConnectionOperation class]]) {
@@ -69,13 +75,23 @@ static NSError * AFNetworkErrorFromNotification(NSNotification *notification) {
     return _sharedLogger;
 }
 
++ (AFNetworkingLoggingLevel)loggingLevel {
+	return kAFNetworkingLoggingLevel;
+}
+
++ (void)setLoggingLevel:(AFNetworkingLoggingLevel)level {
+	kAFNetworkingLoggingLevel = level;
+	
+	[[self sharedLogger] setLevel:level];
+}
+
 - (id)init {
     self = [super init];
     if (!self) {
         return nil;
     }
 
-    self.level = AFNetworkingLoggingLevelInfo;
+    self.level = kAFNetworkingLoggingLevel;
 
     return self;
 }
