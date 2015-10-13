@@ -76,13 +76,8 @@ static NSError * AFNetworkErrorFromNotification(NSNotification *notification) {
 }
 
 + (AFNetworkingLoggingLevel)loggingLevel {
-	return kAFNetworkingLoggingLevel;
-}
-
-+ (void)setLoggingLevel:(AFNetworkingLoggingLevel)level {
-	kAFNetworkingLoggingLevel = level;
-	
-	[[self sharedLogger] setLevel:level];
+	AFNetworkActivityLogger *logger = [self sharedLogger];
+	return logger.level;
 }
 
 - (id)init {
